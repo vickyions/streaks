@@ -1,0 +1,103 @@
+:root {
+  --grid-gap: 0.2rem;
+  --checked-hover: limegreen;
+  --checked: green;
+  --unchecked-hover: #ccc;
+  --unchecked: none;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  padding: 2rem;
+}
+
+.year {
+  border: 1px solid royalblue;
+}
+
+.month {
+  border: 1px solid rosybrown;
+  margin: 10px;
+  padding: var(--grid-gap);
+  display: grid;
+  text-align: center;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  gap: var(--grid-gap);
+}
+
+.week {
+  width: 100%;
+  padding: 0.4rem;
+  overflow: hidden;
+}
+
+.day {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--unchecked-hover);
+}
+
+.day > .check {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.day > .streakmark {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  user-select: none;
+}
+
+.day > .check:not(:checked) + .streakmark {
+  background-color: var(--unchecked);
+}
+
+.day > .check:hover:not(:checked) + .streakmark {
+  width: 100%;
+  height: 100%;
+  background-color: var(--unchecked-hover);
+}
+
+.day > .check:checked + .streakmark {
+  background-color: var(--checked);
+}
+
+.day > .check:hover:checked + .streakmark {
+  background-color: var(--checked-hover);
+}
+
+.day > .check:disabled {
+  display: none;
+}
+
+.day > .check:disabled + .streakmark {
+  background: repeating-linear-gradient(
+    45deg,
+    #eee,
+    #eee 6px,
+    #fff 6px,
+    #fff 12px
+  );
+}
+
+.novisibility {
+  visibility: hidden;
+}

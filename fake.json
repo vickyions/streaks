@@ -1,0 +1,12 @@
+{
+    // using index as month so 0 - 11 index
+    // in month 37 empty slots if any thing inside otherwise empty
+    // 0 for false, 1 for true and checked
+    // also calculate the week name for the first day of that month
+    // let say thu so index 0 sun, 1 mon, 3 tue, 4 wed will be disabled
+    // using js while rendering 
+    // disabled will be crossed or something using css
+    2023: [[
+        0,0,0,1,0,0,1,0,0,0,0,0....
+    ],[],[],[],[],[],[],[],[],[],[],[]]
+}
