@@ -1,22 +1,10 @@
-const fake = {
-  2023: [
-    [
-      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0,
-    ],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-  ],
-};
+const storageKey = "streaks";
+const streaksData = JSON.parse(localStorage.getItem(storageKey));
+const fake = streaksData
+  ? streaksData
+  : {
+      [new Date().getFullYear()]: Array(12).fill(Array(37).fill(0)),
+    };
 
 const yearTemplate = document.getElementById("year-template");
 const monthTemplate = document.getElementById("month-template");
@@ -24,50 +12,80 @@ const dayTemplate = document.getElementById("day-template");
 const body = document.querySelector("body");
 
 //reads from fake and generate
-for (let y in fake) {
-  // debugger
-  const yClone = yearTemplate.content.cloneNode(true);
-  const ySection = yClone.querySelector(".year");
-  const yName = yClone.querySelector(".year_name");
-  yName.textContent = y;
-  const Y = fake[y]?.length === 12 ? fake[y] : Array(12).fill([]);
+generateCal(fake);
+document.querySelectorAll(".check").forEach((c) => {
+  c.addEventListener("change", updateStreak);
+});
 
-  for (let m = 0; m < 12; m++) {
-    const firstDayObj = new Date(y, m, 1);
-    const dayOfWeek = firstDayObj.getDay(); //0 - 6
-    const monthObj = new Date(y, m + 1, 0); //gives last date
-    const noOfDays = monthObj.getDate();
+function generateCal(fake) {
+  if (!fake) return;
+  for (let y in fake) {
+    // debugger
+    const yClone = yearTemplate.content.cloneNode(true);
+    const ySection = yClone.querySelector(".year");
+    const yName = yClone.querySelector(".year_name");
+    yName.textContent = y;
+    //    const Y = fake[y]?.length === 12 ? fake[y] : Array(12).fill([]);
 
-    const mClone = monthTemplate.content.cloneNode(true);
-    const mArticle = mClone.querySelector(".month");
-    const mName = mClone.querySelector(".month_name");
-    mName.textContent = new Intl.DateTimeFormat("en-US", {
-      month: "long",
-    }).format(firstDayObj);
-    const M = Y[m]?.length === 37 ? Y[m] : Array(37).fill(0);
+    for (let m = 0; m < 12; m++) {
+      const firstDayObj = new Date(y, m, 1);
+      const dayOfWeek = firstDayObj.getDay(); //0 - 6
+      const monthObj = new Date(y, m + 1, 0); //gives last date
+      const noOfDays = monthObj.getDate();
 
-    let date = 1;
-    for (let i = 0; i < 37; i++) {
-      const dClone = dayTemplate.content.cloneNode(true);
-      // visibility hidden for unused divs
-      // comment to add hatching instead
-      // const dDiv = dClone.querySelector('.day');
-      const check = dClone.querySelector(".check");
-      const streakmark = dClone.querySelector(".streakmark");
-      if (i < dayOfWeek || noOfDays + dayOfWeek <= i) {
-        check.disabled = true;
-        // dDiv.classList.add('novisibility');
+      const mClone = monthTemplate.content.cloneNode(true);
+      const mArticle = mClone.querySelector(".month");
+      const mName = mClone.querySelector(".month_name");
+      mName.textContent = new Intl.DateTimeFormat("en-US", {
+        month: "long",
+      }).format(firstDayObj);
+      if (!fake[y][m]) {
+        console.error("invalid data year,month: ", y, m);
+        return;
       }
-      if (i >= dayOfWeek && date <= noOfDays) {
-        streakmark.textContent = date.toString();
-        // putting inside name = yyyy-mm(index)-dd(index)
-        check.name = `${y}-${m}-${i}`;
-        check.checked = !!(M[i] === 1);
-        date++;
+      const M = fake[y][m];
+
+      let date = 1;
+      for (let i = 0; i < 37; i++) {
+        const dClone = dayTemplate.content.cloneNode(true);
+        // visibility hidden for unused divs
+        // comment to add hatching instead
+        // const dDiv = dClone.querySelector('.day');
+        const check = dClone.querySelector(".check");
+        const streakmark = dClone.querySelector(".streakmark");
+        if (i < dayOfWeek || noOfDays + dayOfWeek <= i) {
+          check.disabled = true;
+          // dDiv.classList.add('novisibility');
+        }
+        if (i >= dayOfWeek && date <= noOfDays) {
+          streakmark.textContent = date.toString();
+          // putting inside name = yyyy-mm(index)-dd(index)
+          check.name = `${y}-${m}-${i}`;
+          check.checked = !!(M[i] === 1);
+          date++;
+        }
+        mArticle.appendChild(dClone);
       }
-      mArticle.appendChild(dClone);
+      ySection.appendChild(mClone);
     }
-    ySection.appendChild(mClone);
+    body.appendChild(yClone);
   }
-  body.appendChild(yClone);
+}
+
+function saveToLocalStorage(key, data) {
+  if (!key || !data) {
+    console.error("no key for storage wont be saved");
+    return;
+  }
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function updateStreak(e) {
+  // yyyy-mm(index)-dd(index)
+  const dateArray = e.target?.name.split("-").map((x) => parseInt(x));
+  const [y, mIdx, dIdx] = dateArray;
+  console.log(y, mIdx, dIdx);
+  console.log(fake);
+  fake[y][mIdx][dIdx] = e.target.checked ? 1 : 0;
+  saveToLocalStorage(storageKey, fake);
 }

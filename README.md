@@ -4,10 +4,12 @@ simple barebone calendar streak tracker to mark only one habit, or maybe just a 
 
 # todo
 
-- [X] add styling
-    - [X] better griding for months inside year
-    - [ ] dark mode/light mode
-- [X] add month name
-- [X] also add year name
+- [x] add styling
+  - [x] better griding for months inside year
+  - [ ] dark mode/light mode
+- [x] add month name
+- [x] also add year name
 - [ ] add shifitng to different years
-- [ ] add localstorage
+- [x] add localstorage
+  - [ ] fix weird issue when on first reload checking one month checks in all months indexes while it doesnt happen after a refresh????
+- [ ] need to sort the years if random years can be added then store?
