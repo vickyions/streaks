@@ -3,7 +3,9 @@ const streaksData = JSON.parse(localStorage.getItem(storageKey));
 const fake = streaksData
   ? streaksData
   : {
-      [new Date().getFullYear()]: Array(12).fill(Array(37).fill(0)),
+      [new Date().getFullYear()]: Array.from({ length: 12 }, () =>
+        Array(37).fill(0)
+      ),
     };
 
 const yearTemplate = document.getElementById("year-template");
